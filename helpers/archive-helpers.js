@@ -25,17 +25,58 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(){
+exports.readListOfUrls = function(callback){
+  fs.readFileSync('./archives/sites.txt', function(err, data){
+    if (err){
+      console.log(err);
+    }
+    var result = data.toString().split('\n');
+    callback(result);
+  });
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(site){
+  // 2. Yes = Working, here is loading page
+  // 3. No = addUrlToList, here is the loading page
+  // 1. Yes = Here is the HTML
+
+  exports.readListOfUrls(function(sites){
+    if (_.indexOf(sites, site) === -1){
+      exports.addUrlToList(site);
+    }
+    else {
+      console.log('readListOfUrls says: its already in the list');
+    }
+  });
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(site){
+  var site = site +'\n';
+  fs.appendFile('./archives/sites.txt', site, function(err){
+    if (err) throw err;
+    console.log('addUrl says: It\'s saved!');
+  });
 };
 
-exports.isURLArchived = function(){
+exports.isURLArchived = function(site, res, req, callback){
+  var fixtureName = site;
+  var fixturePath = exports.paths.archivedSites + "/" + fixtureName;
+  fs.exists(fixturePath, function(exists){
+    if (exists){
+      //execute callback on fixturePath
+      renderHTML(res, req);
+      console.log('isUrlArchived says: here is your file');
+    }
+    else {
+      exports.isUrlInList(site);
+    }
+  });
 };
 
 exports.downloadUrls = function(){
+  //downloads actual html when called
+};
+
+exports.caller = function(func) {
+  func();
 };

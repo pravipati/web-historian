@@ -11,10 +11,22 @@ exports.headers = headers = {
 };
 
 exports.serveAssets = function(res, asset, callback) {
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
+
 };
 
 
 
 // As you progress, keep thinking about what helper functions you can put here!
+exports.renderHTML = function(res, req, site) {
+  var fixtureName = site;
+  var fixturePath = path.archivedSites + "/" + fixtureName;
+
+  fs.readFile(fixturePath, function(error, data) {
+    if (error) {
+      console.log(error);
+    }
+    var loadingPage = data;
+    res.write(loadingPage);
+    res.end();
+  });
+};
